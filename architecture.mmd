@@ -1,0 +1,16 @@
+flowchart LR
+  U[User] --> H[HAProxy failover :8080]
+  H -->|primary| P
+  H -.->|backup| C
+  subgraph P[Private cluster - kind :30080]
+    PS[Service web] --> PW1[web pod 1]
+    PS --> PW2[web pod 2..6 - HPA]
+    PW1 --> PR[(Redis)]
+    PW2 --> PR
+  end
+  subgraph C[Public cluster - kind :30081]
+    CS[Service web] --> CW1[web pod 1]
+    CS --> CW2[web pod 2]
+    CW1 --> CR[(Redis)]
+    CW2 --> CR
+  end
